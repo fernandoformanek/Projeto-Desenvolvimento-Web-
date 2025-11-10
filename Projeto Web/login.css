@@ -36,6 +36,11 @@ body {
   padding-bottom: 1rem;
 }
 
+#botao-criarconta {
+  background-color: #372941;
+  border: none;
+}
+
 label {
   padding-bottom: 0.5rem;
   padding-top: 1rem;
