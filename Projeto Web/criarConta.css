@@ -58,10 +58,13 @@ button {
   /* Margin e Padding */
   margin-top: 2rem;
   margin-bottom: 0;
-  padding: 0.3rem 0.8rem;
+  padding: 0.8rem 1.5rem;
 
+  /* Cores */
   background-color: #766681;
   box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.2);
+
+  /* Borda */
   border-radius: 1rem;
   border: solid #766681;
 }
@@ -101,18 +104,24 @@ button {
   padding-bottom: 1rem;
 }
 
-#botao-logar {
+#botao-criarconta {
   margin-top: 3rem;
 }
 
 #botao-voltar-login {
   /* Fonte */
-
-  /* Borda */
-  border: solid #372941;
-
-  /* Cores */
-  background-color: #372941;
+  text-decoration: none;
 
   /* Margin e Padding */
+  margin-top: 2rem;
+  margin-bottom: 0;
+  padding: 0.8rem 1.5rem;
+
+  /* Cores */
+  background-color: #766681;
+  box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.2);
+
+  /* Borda */
+  border-radius: 1rem;
+  border: solid #766681;
 }

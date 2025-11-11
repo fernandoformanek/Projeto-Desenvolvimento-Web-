@@ -66,12 +66,22 @@ body {
   padding-bottom: 1rem;
 }
 
-#botao-criarconta {
-  /* Borda */
-  border: none;
+#botao-cadastre-se {
+  /* Fonte */
+  text-decoration: none;
+
+  /* Margin e Padding */
+  margin-top: 2rem;
+  margin-bottom: 0;
+  padding: 0.8rem 1.5rem;
 
   /* Cores */
-  background-color: #372941;
+  background-color: #766681;
+  box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.2);
+
+  /* Borda */
+  border-radius: 1rem;
+  border: solid #766681;
 }
 
 label {
@@ -101,7 +111,7 @@ button {
   /* Margin e Padding */
   margin-top: 3rem;
   margin-bottom: 0;
-  padding: 0.3rem 0.8rem;
+  padding: 0.8rem 1.5rem;
 
   /* Borda */
   border-radius: 1rem;
