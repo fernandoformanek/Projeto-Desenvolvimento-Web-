@@ -1,0 +1,80 @@
+* {
+    /* Fonte */
+    font-size: 62.5%;
+    font-family: roboyo, sans-serif;
+    color: #eeeeee;
+  }
+  
+  html,
+  body {
+    /* Margin e Padding */
+    margin: 0;
+    padding: 0;
+  
+    /* Borda */
+    border: none;
+  
+    /* Cores */
+    background: linear-gradient(to bottom, #22152c 0%, #422c52 100%) no-repeat
+      fixed;
+  
+    /* Dimensões */
+    height: 100%;
+  }
+  
+  h1{
+      font-size: 4rem;
+  }
+  
+  button {
+    /* Fonte */
+    font-size: 2rem;  
+  
+    /* Margin e Padding */
+    margin-top: 3rem;
+    margin-bottom: 0;
+    padding: 0.8rem 1.5rem;
+  
+    /* Borda */
+    border-radius: 1rem;
+    border: solid #766681;
+  
+    /* Cores */
+    background-color: #766681;
+    box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  #secao-jogo{
+      /* Fonte */
+      font-size: 3rem;
+        /* Flex */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  span{
+      /* Fonte */
+      font-size: 2rem;
+  }
+  
+  input {
+    /* Margin e Padding */
+    padding: 0.6rem;
+    margin-top: 2rem;
+  
+    /* Borda */
+    border-radius: 1rem;
+    border: solid #61526c;
+  
+    /* Cores */
+    background-color: #61526c;
+  }
+  
+  #frase span {
+    font-size: 40px;
+    letter-spacing: 2px;
+    font-style: italic;
+  }
+  

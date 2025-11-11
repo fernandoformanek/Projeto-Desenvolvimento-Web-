@@ -1,0 +1,124 @@
+/* Organização dos itens css
+
+Fonte 
+Flex - tudo relacionado ao display flex
+Borda
+Margin e Padding
+Dimensões
+Cores */
+
+* {
+    /* Fonte */
+    font-size: 62.5%;
+    font-family: roboyo, sans-serif;
+    color: #eeeeee;
+  }
+  
+  html,
+  body {
+    /* Margin e Padding */
+    margin: 0;
+    padding: 0;
+  
+    /* Borda */
+    border: none;
+  
+    /* Cores */
+    background: linear-gradient(to bottom, #22152c 0%, #422c52 100%) no-repeat
+      fixed;
+  
+    /* Dimensões */
+    height: 100%;
+  }
+  
+  #formulario {
+    /* Fonte */
+    font-size: 4rem;
+  
+    /* Flex */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  
+    /* Borda */
+    border: none;
+    border-radius: 1rem;
+  
+    /* Margin e Padding */
+    margin: 10rem auto 0 auto;
+    padding: 3rem 5rem 3rem 5rem;
+  
+    /* Dimensões */
+    width: 30rem;
+  
+    /* Cores */
+    background-color: #372941;
+    box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  #titulo-formulario {
+    /* Fonte */
+    font-size: 4.5rem;
+  
+    /* Margin e Padding */
+    margin: 0;
+    padding-bottom: 1rem;
+  }
+  
+  #botao-cadastre-se {
+    /* Fonte */
+    text-decoration: none;
+  
+    /* Margin e Padding */
+    margin-top: 2rem;
+    margin-bottom: 0;
+    padding: 0.8rem 1.5rem;
+  
+    /* Cores */
+    background-color: #766681;
+    box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.2);
+  
+    /* Borda */
+    border-radius: 1rem;
+    border: solid #766681;
+  }
+  
+  label {
+    /* Margin e Padding */
+    padding-bottom: 0.5rem;
+    padding-top: 1rem;
+  }
+  
+  input {
+    /* Margin e Padding */
+    padding: 0.6rem;
+  
+    /* Borda */
+    border-radius: 1rem;
+    border: solid #61526c;
+  
+    /* Cores */
+    background-color: #61526c;
+  }
+  
+  ::placeholder {
+    /* Cores */
+    color: #ffffff57;
+  }
+  
+  button {
+    /* Margin e Padding */
+    margin-top: 3rem;
+    margin-bottom: 0;
+    padding: 0.8rem 1.5rem;
+  
+    /* Borda */
+    border-radius: 1rem;
+    border: solid #766681;
+  
+    /* Cores */
+    background-color: #766681;
+    box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.2);
+  }
+  
