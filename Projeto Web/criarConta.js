@@ -22,7 +22,6 @@ var botaoVoltarLogin = document.getElementById('botao-voltar-login');
 document.addEventListener('DOMContentLoaded', function () {
   var botoes = document.getElementsByTagName('button');
   for (let i = 0; i < botoes.length; i++) {
-    // Use let para i no loop for
     // Adiciona o evento para quando o mouse ENTRA
     botoes[i].addEventListener('mouseover', function () {
       $(this).stop(true, true).animate(

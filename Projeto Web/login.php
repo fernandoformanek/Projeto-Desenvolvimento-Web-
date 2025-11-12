@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <link rel="stylesheet" href="login.css" />
+  </head>
+  <body>
+    <section>
+      <!-- Formulario de Login -->
+      <form action="" id="formulario">
+        <!-- Titulo -->
+        <h1 id="titulo-formulario">Login</h1>
+
+        <!-- Input de email -->
+        <label for="email">Email:</label>
+        <input required type="email" name="email" id="email" placeholder="Seu email" />
+
+        <!-- Input de senha -->
+        <label for="senha">Senha:</label>
+        <input required type="password" name="senha" id="senha" placeholder="Senha" />
+
+        <!-- Botões -->
+        <!-- <button type="submit" id="botao-criarconta">Criar nova conta</button> -->
+        <a href="criarConta.php" id="botao-cadastre-se">Criar Conta</a>
+        <button type="submit" id="botao-logar">Logar</button>
+      </form>
+    </section>
+  </body>
+</html>
