@@ -15,6 +15,11 @@ const frases = [
 
 let Pontos = 0;
 let FraseAtual = '';
+let tempototal = 30;
+let tempoRestante = tempototal;
+let timerId = null;
+let fimtempo = 0;
+let emJogo = false;
 
 // Inicia o jogo ao clicar no botão
 function IniciarJogo() {
@@ -23,8 +28,45 @@ function IniciarJogo() {
     Pontos = 0;
     pontuacao.textContent = Pontos;
     inputUsuario.value = '';
+    inputUsuario.disabled = false;
+    inputUsuario.focus();
+    starttimer(30); // 30 segundos
   });
 }
+
+
+function starttimer(segundos) {
+if (timerId) clearInterval(timerId); // Limpa timer anterior se existir
+tempototal = segundos;
+fimtempo = Date.now() + segundos * 1000; // Multiplica por 1000 para converter em segundos
+tick() 
+timerId = setInterval(tick, 100);
+emJogo = true;
+}
+
+function tick() {
+  tempoRestante = fimtempo - Date.now();
+if (tempoRestante <= 0) {
+  tempoRestante = 0;
+  UpdateTimer(tempoRestante);
+  endgame();
+  return;
+}
+UpdateTimer(tempoRestante);
+}
+
+function UpdateTimer(segundos) {
+  const segundosRestantes = Math.floor(segundos / 1000);
+  document.getElementById('timer').textContent = segundosRestantes;
+}
+
+function endgame() {
+  emJogo = false;
+  clearInterval(timerId);
+  inputUsuario.disabled = true;
+  alert(`Tempo esgotado! Sua pontuação final é: ${Pontos}`);
+}
+
 
 // Escolhe uma frase aleatória e a exibe na tela
 function EscolherFrase() {
@@ -85,3 +127,4 @@ inputUsuario.addEventListener('paste', function (event) {
 
   alert('Não é permitido colar no jogo!');
 });
+

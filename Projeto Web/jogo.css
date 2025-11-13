@@ -124,3 +124,26 @@ input {
   /* Fonte */
   font-size: 2.5rem;
 }
+
+#timer {
+  position: fixed;
+  top: 40%;
+  right: 20%;
+  font-size: 3.5rem;
+  padding: 0.5rem;
+  text-align: center;
+  animation: pulsar 1s infinite alternate,
+  alternarCor 2s infinite;
+}
+
+/*Animação do timer pulsar */
+@keyframes pulsar {                   
+  0% { transform: translateY(-50%) scale(1.5); }
+  100% { transform: translateY(-50%) scale(1); }
+}
+
+@keyframes alternarCor {
+  0% { color: white; }
+  50% { color: plum; }
+  100% { color: white; }
+}

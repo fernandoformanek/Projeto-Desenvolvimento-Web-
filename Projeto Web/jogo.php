@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="jogo.css">
 </head>
 <body>
+    <p id ="timer">30</p>
     <header>
         <nav>
             <a href="jogo.php">Jogar</a>
