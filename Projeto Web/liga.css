@@ -98,6 +98,10 @@ a {
 }
 
 #titulo {
+  /* Margin e Padding */
+  margin-top: 6rem;
+  margin-bottom: 5rem;
+
   /* Flex */
   display: flex;
   flex-direction: row;

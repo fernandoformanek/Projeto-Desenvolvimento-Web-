@@ -9,9 +9,9 @@
 <body>
     <header>
         <nav>
+            <a href="jogo.php">Jogar</a>
+            <a href="liga.php">Ligas</a>
             <a href="login.php">Login</a>
-            <a href="ranking.php">Ranking</a>
-            <a href="login.php">Ligas</a>
             <a href="login.php">Perfil</a>
         </nav>
     </header>

@@ -78,3 +78,10 @@ inputUsuario.addEventListener('input', () => {
     EscolherFrase(); // nova frase
   }
 });
+
+// Previne colar no campo de entrada
+inputUsuario.addEventListener('paste', function (event) {
+  event.preventDefault();
+
+  alert('Não é permitido colar no jogo!');
+});

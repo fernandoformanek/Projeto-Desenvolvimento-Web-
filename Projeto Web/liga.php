@@ -4,19 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ranking</title>
-    <link rel="stylesheet" href="ranking.css">
+    <link rel="stylesheet" href="liga.css">
 </head>
 <body>
     <header>
         <nav>
+            <a href="jogo.php">Jogar</a>
+            <a href="liga.php">Ligas</a>
             <a href="login.php">Login</a>
-            <a href="ranking.php">Ranking</a>
-            <a href="login.php">Ligas</a>
             <a href="login.php">Perfil</a>
         </nav>
     </header>
 
-    <h1 id="titulo">Ranking de Jogadores</h1>
+    <h1 id="titulo">Ranking de jogadores da Liga</h1>
     <section id="secao-ranking">
         <table id="tabela-ranking">
             <thead>
