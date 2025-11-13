@@ -10,7 +10,7 @@
     <header>
         <nav>
             <a href="login.php">Login</a>
-            <a href="login.php">Ranking</a>
+            <a href="ranking.php">Ranking</a>
             <a href="login.php">Ligas</a>
             <a href="login.php">Perfil</a>
         </nav>
