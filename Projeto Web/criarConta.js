@@ -4,14 +4,14 @@ var inputNome = document.getElementById('name');
 var inputEmail = document.getElementById('email');
 var inputSenha = document.getElementById('senha');
 
-formulario.addEventListener('submit', function (ev) {
-  ev.preventDefault();
-  console.log(inputNome.value, inputEmail.value, inputSenha.value);
+// formulario.addEventListener('submit', function (ev) {
+//   ev.preventDefault();
+//   console.log(inputNome.value, inputEmail.value, inputSenha.value);
 
-  alert(
-    `Seja bem-vindo(a), ${inputNome.value}! Sua conta foi criada com sucesso`
-  );
-});
+//   alert(
+//     `Seja bem-vindo(a), ${inputNome.value}! Sua conta foi criada com sucesso`
+//   );
+// });
 
 // Botões
 var botoes = document.getElementsByTagName('button');
@@ -45,5 +45,3 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 });
-
-

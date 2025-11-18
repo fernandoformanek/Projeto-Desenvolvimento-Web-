@@ -1,38 +1,46 @@
 <?php
+require "db_functions.php";
 
-if(isset($_POST['submit']))
-{
-//  print_r($_POST['name']);
-//  print_r($_POST['email']);
-//  print_r($_POST['senha']);
+$error = false;
+$success = false;
+$name = $email = "";
 
-include_once('config.php');
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+  if (isset($_POST["name"]) && isset($_POST["email"]) && isset($_POST["password"]) && isset($_POST["confirm_password"])) {
 
-$NOME = $_POST['name'];
-$email = $_POST['email'];
-$senha = $_POST['senha'];
+    $conn = connect_db();
 
-// ... Continuação do seu código PHP ...
+    $name = mysqli_real_escape_string($conn,$_POST["name"]);
+    $email = mysqli_real_escape_string($conn,$_POST["email"]);
+    $password = mysqli_real_escape_string($conn,$_POST["password"]);
+    $confirm_password = mysqli_real_escape_string($conn,$_POST["confirm_password"]);
 
-$sql_insert = "INSERT INTO usuarios(nome, email, senha) VALUES ('$NOME', '$email', '$senha')";
-$result = mysqli_query($conexao, $sql_insert);
+    if ($password == $confirm_password) {
+      $password = md5($password);
 
-// Substitua pelo novo bloco de verificação:
-if ($result) {
-    // Redireciona em caso de sucesso (melhor que alerta para produção)
-    header('Location: CriarConta.php?cadastro=sucesso');
-    exit; 
-} else {
-    // Interrompe o script e mostra a mensagem de erro exata do MySQL
-    die("Falha na inserção! Detalhe do MySQL: " . mysqli_error($conexao));
-}
+      $sql = "INSERT INTO $table_users
+              (name, email, password) VALUES
+              ('$name', '$email', '$password');";
 
-// ... o restante do seu código PHP, fechando o if(isset($_POST['submit']))
+      if(mysqli_query($conn, $sql)){
+        $success = true;
+      }
+      else {
+        $error_msg = mysqli_error($conn);
+        $error = true;
+      }
+    }
+    else {
+      $error_msg = "Senha não confere com a confirmação.";
+      $error = true;
+    }
+  }
+  else {
+    $error_msg = "Por favor, preencha todos os dados.";
+    $error = true;
+  }
 }
 ?>
-
-
-
 
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -43,29 +51,46 @@ if ($result) {
     <link rel="stylesheet" href="criarConta.css" />
   </head>
   <body>
+
+  <?php if ($success): ?>
+  <h3 style="color:lightgreen;">Usuário criado com sucesso!</h3>
+  <p>
+    Seguir para <a href="login.php">login</a>.
+  </p>
+<?php endif; ?>
+
+<?php if ($error): ?>
+  <h3 style="color:red;"><?php echo $error_msg; ?></h3>
+<?php endif; ?>
+
+
     <section>
       <!-- Formulario de Criar Conta -->
-      <form action="CriarConta.php" method="POST" id="formulario">
+      <form action="CriarConta.php" method="post" id="formulario">
         <!-- Titulo -->
         <h1 id="titulo-formulario">Criar Conta</h1>
 
         <!-- Input de nome -->
         <label for="name">Nome:</label>
-        <input required type="text" name="name" id="name" placeholder="Seu nome" />
+        <input required type="text" name="name" id="name" value="<?php echo $name; ?>" placeholder="Seu nome" />
 
         <!-- Input de email -->
         <label for="email">Email:</label>
-        <input required type="email" name="email" id="email" placeholder="Seu email" />
+        <input required type="email" name="email" value="<?php echo $email; ?>" id="email" placeholder="Seu email" />
 
         <!-- Input de Criar senha -->
-        <label for="senha">Criar senha:</label>
+        <label for="password">Criar senha:</label>
         <input
           required
           type="password"
-          name="senha"
+          name="password"
           id="senha"
+          value = ""
           placeholder="Nova senha"
         />
+
+          <label for="confirm_password">Confirmação da Senha: </label>
+          <input type="password" name="confirm_password" value="" required placeholder="Nova senha">
 
         <!-- Botões -->
         <!-- <button type="submit" id="botao-voltar-login" >Voltar para Login</button> -->
