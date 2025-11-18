@@ -34,25 +34,24 @@ function IniciarJogo() {
   });
 }
 
-
 function starttimer(segundos) {
-if (timerId) clearInterval(timerId); // Limpa timer anterior se existir
-tempototal = segundos;
-fimtempo = Date.now() + segundos * 1000; // Multiplica por 1000 para converter em segundos
-tick() 
-timerId = setInterval(tick, 100);
-emJogo = true;
+  if (timerId) clearInterval(timerId); // Limpa timer anterior se existir
+  tempototal = segundos;
+  fimtempo = Date.now() + segundos * 1000; // Multiplica por 1000 para converter em segundos
+  tick();
+  timerId = setInterval(tick, 100);
+  emJogo = true;
 }
 
 function tick() {
   tempoRestante = fimtempo - Date.now();
-if (tempoRestante <= 0) {
-  tempoRestante = 0;
+  if (tempoRestante <= 0) {
+    tempoRestante = 0;
+    UpdateTimer(tempoRestante);
+    endgame();
+    return;
+  }
   UpdateTimer(tempoRestante);
-  endgame();
-  return;
-}
-UpdateTimer(tempoRestante);
 }
 
 function UpdateTimer(segundos) {
@@ -65,8 +64,28 @@ function endgame() {
   clearInterval(timerId);
   inputUsuario.disabled = true;
   alert(`Tempo esgotado! Sua pontuação final é: ${Pontos}`);
+  submitScore(Pontos);
 }
 
+function submitScore(score) {
+  // Apenas submete se o score for maior que 0
+  if (score > 0) {
+    const scoreForm = document.getElementById('scoreForm');
+    const finalScoreInput = document.getElementById('final_score_input');
+
+    // Verifica se o formulário e o input oculto existem (só existem se o usuário estiver logado)
+    if (scoreForm && finalScoreInput) {
+      finalScoreInput.value = score; // Define o valor do input oculto
+      scoreForm.submit(); // Submete o formulário, recarregando a página
+    } else {
+      console.warn(
+        'Formulário de pontuação não encontrado ou usuário não logado. Pontuação não será salva automaticamente.'
+      );
+    }
+  } else {
+    console.log('Nenhum ponto marcado nesta partida, não salvando.');
+  }
+}
 
 // Escolhe uma frase aleatória e a exibe na tela
 function EscolherFrase() {
@@ -127,4 +146,3 @@ inputUsuario.addEventListener('paste', function (event) {
 
   alert('Não é permitido colar no jogo!');
 });
-

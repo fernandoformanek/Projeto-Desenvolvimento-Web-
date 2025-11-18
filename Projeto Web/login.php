@@ -1,9 +1,15 @@
 <?php
-require "db_functions.php";
 require "authenticate.php";
+require "db_functions.php";
 
 $error = false;
 $password = $email = "";
+
+if ($login) {
+    header("Location: jogo.php"); // Redireciona para a página do jogo
+    exit();
+}
+
 
 if (!$login && $_SERVER["REQUEST_METHOD"] == "POST") {
   if (isset($_POST["email"]) && isset($_POST["password"])) {
@@ -28,8 +34,7 @@ if (!$login && $_SERVER["REQUEST_METHOD"] == "POST") {
           $_SESSION["user_name"] = $user["name"];
           $_SESSION["user_email"] = $user["email"];
 
-          // mudar
-          header("Location: " . dirname($_SERVER['SCRIPT_NAME']) . "/jogo.php");
+          header("Location: jogo.php");
           exit();
         }
         else {
@@ -63,13 +68,6 @@ if (!$login && $_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="stylesheet" href="login.css" />
   </head>
   <body>
-
-      <?php if ($login): ?>
-        <h3>Você já está logado!</h3>
-      </body>
-      </html>
-      <?php exit(); ?>
-    <?php endif; ?>
 
     <?php if ($error): ?>
       <h3 style="color:red;"><?php echo $error_msg; ?></h3>

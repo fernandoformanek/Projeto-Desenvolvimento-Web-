@@ -1,3 +1,31 @@
+<?php
+require "authenticate.php"; // <--- Adicione esta linha
+require "db_functions.php"; // <--- Adicione esta linha
+require "db_credentials.php"; // <--- Adicione esta linha
+
+// --- INÍCIO DA LÓGICA PARA BUSCAR RANKING ---
+$players = []; // Array para armazenar os dados dos jogadores
+$conn = connect_db();
+
+// Consulta para buscar nome e pontuação total de todos os usuários,
+// ordenados pela pontuação total (decrescente) e, em caso de empate, pelo nome (crescente)
+$sql = "SELECT name, total_score FROM $table_users ORDER BY total_score DESC, name ASC";
+$result = mysqli_query($conn, $sql);
+
+if ($result) {
+    while ($row = mysqli_fetch_assoc($result)) {
+        $players[] = $row;
+    }
+    mysqli_free_result($result); // Libera a memória do resultado
+} else {
+    // Em um ambiente de produção, este erro deveria ser logado, não exibido ao usuário.
+    // Para depuração: error_log("Erro ao buscar ranking: " . mysqli_error($conn));
+}
+
+disconnect_db($conn);
+// --- FIM DA LÓGICA PARA BUSCAR RANKING ---
+?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -11,8 +39,12 @@
         <nav>
             <a href="jogo.php">Jogar</a>
             <a href="liga.php">Ligas</a>
-            <a href="login.php">Login</a>
-            <a href="login.php">Perfil</a>
+            <a href="<?php echo $login ? 'profile.php' : 'login.php'; ?>">
+                <?php echo $login ? 'Perfil (' . htmlspecialchars($_SESSION["user_name"]) . ')' : 'Login'; ?>
+            </a>
+            <?php if ($login): ?>
+                <a href="logout.php">Sair</a>
+            <?php endif; ?>
         </nav>
     </header>
 
@@ -27,21 +59,20 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>Jogador1</td>
-                    <td>1500</td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>Jogador2</td>
-                    <td>1200</td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td>Jogador3</td>
-                    <td>1000</td>
-                </tr>
+                <?php if (empty($players)): ?>
+                    <tr>
+                        <td colspan="3">Nenhum jogador no ranking ainda.</td>
+                    </tr>
+                <?php else: ?>
+                    <?php $position = 1; ?>
+                    <?php foreach ($players as $player): ?>
+                        <tr>
+                            <td><?php echo $position++; ?></td>
+                            <td><?php echo htmlspecialchars($player['name']); ?></td>
+                            <td><?php echo htmlspecialchars($player['total_score']); ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php endif; ?>       
             </tbody>
         </table>
     </section>

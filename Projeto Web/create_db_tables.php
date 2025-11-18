@@ -35,6 +35,7 @@ $sql = "CREATE TABLE $table_users (
   name VARCHAR(100) NOT NULL,
   email VARCHAR(100) NOT NULL,
   password VARCHAR(128) NOT NULL,
+  total_score INT DEFAULT 0, 
   created_at DATETIME,
   updated_at DATETIME,
   last_login_at DATETIME,
