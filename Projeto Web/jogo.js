@@ -3,26 +3,15 @@ const inputUsuario = document.getElementById('input-usuario');
 const pontuacao = document.getElementById('pontos');
 const botaoIniciar = document.getElementById('botao-iniciar');
 
-// Vetor para frases usadas no jogo
-let frases = [];
-
-// Carrega as frases do arquivo .txt
-fetch("frases.txt")
-  .then(res => res.text())
-  .then(texto => {            //Divide cada linha em um item do array
-      frases = texto
-        .split("\n")
-        .map(f => f.trim())
-        .filter(f => f.length > 0);
-
-      console.log("Frases carregadas:", frases.length);
-
-      // Agora sim, inicia o jogo
-      IniciarJogo();
-  })
-  .catch(err => console.error("Erro ao carregar frases:", err));
-
-
+// Frases usadas no jogo
+const frases = [
+  'how are you',
+  'i love apples',
+  'i like this restaurant',
+  'do you want to play?',
+  'this is a fun game',
+  'never give up',
+];
 
 let Pontos = 0;
 let FraseAtual = '';
@@ -114,6 +103,7 @@ function EscolherFrase() {
   frase.innerHTML = html;
 }
 
+IniciarJogo();
 
 inputUsuario.addEventListener('input', () => {
   const letras = frase.querySelectorAll('span');
