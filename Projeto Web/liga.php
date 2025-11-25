@@ -39,7 +39,7 @@ disconnect_db($conn);
         <nav>
             <a href="jogo.php">Jogar</a>
             <a href="liga.php">Ligas</a>
-            <a href="<?php echo $login ? 'perfil.php' : 'login.php'; ?>">
+            <a href="<?php echo $login ? 'profile.php' : 'login.php'; ?>">
                 <?php echo $login ? 'Perfil (' . htmlspecialchars($_SESSION["user_name"]) . ')' : 'Login'; ?>
             </a>
             <?php if ($login): ?>
