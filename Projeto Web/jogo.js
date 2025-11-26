@@ -7,22 +7,18 @@ const botaoIniciar = document.getElementById('botao-iniciar');
 let frases = [];
 
 // Carrega as frases do arquivo .txt
-fetch("frases.txt")
-  .then(res => res.text())
-  .then(texto => {            //Divide cada linha em um item do array
-      frases = texto
-        .split("\n")
-        .map(f => f.trim())
-        .filter(f => f.length > 0);
+fetch('frases.txt')
+  .then((res) => res.text())
+  .then((texto) => {
+    //Divide cada linha em um item do array
+    frases = texto
+      .split('\n')
+      .map((f) => f.trim())
+      .filter((f) => f.length > 0);
 
-      console.log("Frases carregadas:", frases.length);
-
-      // Agora sim, inicia o jogo
-      IniciarJogo();
-  })
-  .catch(err => console.error("Erro ao carregar frases:", err));
-
-
+    // Agora sim, inicia o jogo
+    IniciarJogo();
+  });
 
 let Pontos = 0;
 let FraseAtual = '';
@@ -113,7 +109,6 @@ function EscolherFrase() {
   // coloca na tela
   frase.innerHTML = html;
 }
-
 
 inputUsuario.addEventListener('input', () => {
   const letras = frase.querySelectorAll('span');

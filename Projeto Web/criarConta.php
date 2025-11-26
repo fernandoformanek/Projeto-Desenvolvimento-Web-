@@ -52,11 +52,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   </head>
   <body>
 
-  <?php if ($success): ?>
-  <h3 style="color:lightgreen;">Usuário criado com sucesso!</h3>
-  <p>
-    Seguir para <a href="login.php">login</a>.
-  </p>
+  <?php if ($success): 
+      header("Refresh: 0; url=login.php");
+
+    
+  ?>
+      
 <?php endif; ?>
 
 <?php if ($error): ?>

@@ -12,18 +12,32 @@ if ($login && $_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"]) &&
     // Garante que a pontuação seja um número inteiro e positivo
     $score_to_add = isset($_POST["final_score"]) ? (int)$_POST["final_score"] : 0;
 
+    $current_league_id = isset($_SESSION["active_league_id"]) ? (int)$_SESSION["active_league_id"] : NULL;
+
     if ($score_to_add > 0) {
         $conn = connect_db();
 
-        // Escapa os dados para prevenir SQL Injection (método atual em seu código)
         $score_to_add_escaped = mysqli_real_escape_string($conn, $score_to_add);
         $user_id_escaped = mysqli_real_escape_string($conn, $user_id);
 
-        // SQL para atualizar a pontuação total do usuário
-        $sql = "UPDATE $table_users SET total_score = total_score + '$score_to_add_escaped' WHERE id = '$user_id_escaped'";
+        $league_id_for_query = 'NULL';
+        if($current_league_id !== NULL && $current_league_id > 0){
+            $league_id_for_query = "'" . mysqli_real_escape_string($conn, $current_league_id) . "'";
+        }
 
-        if(mysqli_query($conn, $sql)){
-            $score_save_message = "<p style='color: green;'>Pontuação adicionada com sucesso ao seu perfil!</p>";
+        $sql_update_user = "UPDATE $table_users 
+        SET total_score = total_score + '$score_to_add_escaped' 
+        WHERE id = '$user_id_escaped'";
+
+        if(mysqli_query($conn, $sql_update_user)){
+            $sql_insert_match = "INSERT INTO $table_match_history (user_id, league_id, score_gained) 
+            VALUES ('$user_id_escaped', $league_id_for_query, '$score_to_add_escaped')";
+
+            if (mysqli_query($conn, $sql_insert_match)) {
+                $score_save_message = "<p style='color: green;'>Pontuação adicionada e partida registrada com sucesso!</p>";
+            } else {
+                $score_save_message = "<p style='color: red;'>Erro ao registrar partida no histórico: " . mysqli_error($conn) . "</p>";
+            }
         } else {
             $score_save_message = "<p style='color: red;'>Erro ao salvar pontuação: " . mysqli_error($conn) . "</p>";
         }
@@ -32,6 +46,7 @@ if ($login && $_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"]) &&
         $score_save_message = "<p style='color: orange;'>Pontuação zero ou inválida. Nada foi salvo.</p>";
     }
 }
+
 // --- FIM DA LÓGICA PARA SALVAR PONTUAÇÃO ---
 ?>
 <!DOCTYPE html>

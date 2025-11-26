@@ -70,3 +70,28 @@ body`, por volta da linha 17 nos dois arquivos.
 - **Referência no Código:** blocos php do jogo.php, função submitScore em jogo.js, alteração na função endgame no jogo.js, parte do php no perfil.php e dinamica no ranking.php
 
 ---
+
+### Interação 4
+
+- **Data:** 26/11/2025
+- **Etapa do Projeto:** Fazer a parte das ligas
+- **Ferramenta de IA Utilizada:** Chat GPT
+- **Objetivo da Consulta:** Me dar um caminho e base para eu introduzir a logica de ligas no php e como fazer funcionar no jogo.php
+- **Prompt(s) Utilizado(s):** Me ajude a fazer um sistema de Ligas para meu site:
+
+O sistema deve disponibilizar a inscrição do usuário em ligas. Ligas são um conjunto de usuários que competem entre si. O usuário pode criar e se cadastrar em ligas. Para o cadastro do usuário em uma liga é necessário uma palavra-chave, definida pelo criador da liga.
+
+A pontuação da liga deve ser exibida de duas formas:
+
+pontuação desde a criação da liga; e
+pontuação semanal.
+Além da pontuação em suas respectivas ligas, o usuário também pode verificar sua pontuação geral, envolvendo todos os jogadores. Esse quadro também deve apresentar a pontuação desde a criação do sistema e pontuação semanal.
+
+A qualquer momento, o usuário pode acessar um relatório com os dados de todas as partidas jogadas, com suas respectivas pontuações.
+
+- **Resumo da Resposta da IA:** A IA me deu codigos completos e que não faziam parte do conteúdo estudado. Então pedi para ela me dar parte de codigos como base e me explicar para eu mesmo ir implementando. Antes disso, forneci a ela como é a lógica php que esta sendo utilizada na disciplina com mysqli, senhas criptografadas com hash md5, prevenção de sql injection com mysqli_real_escape_string, etc.
+- **Análise e Aplicação:** A IA me indicou quais arquivos eu deveria alterar e como deveria ser feitas as alterações, me explicando a lógica por trás dos codigos.
+  Depois disso, meu codigo apresentou diversos erros que a IA me ajudou a solucionar.
+- **Referência no Código:** php da liga.php, principalmente na parte de entrar na liga, que tive bastante dificuldade
+
+---

@@ -9,15 +9,14 @@ if (!$login) {
     exit();
 }
 
-// Recupera informações do usuário da sessão
+// informações do usuário da sessão
 $user_id = $_SESSION["user_id"];
 $user_name = $_SESSION["user_name"];
 $user_email = $_SESSION["user_email"];
-$total_score = 0; // Valor padrão
+$total_score = 0; 
 
 $conn = connect_db();
 
-// Escapa o user_id para prevenir SQL Injection (método atual em seu código)
 $user_id_escaped = mysqli_real_escape_string($conn, $user_id);
 
 // Busca a pontuação total do usuário no banco de dados
@@ -27,12 +26,26 @@ $result = mysqli_query($conn, $sql);
 if ($result && mysqli_num_rows($result) > 0) {
     $user_data = mysqli_fetch_assoc($result);
     $total_score = $user_data['total_score'];
-} else {
-    // Em um ambiente de produção, este erro deveria ser logado, não exibido ao usuário.
-    // Para depuração: echo "Erro ao buscar pontuação: " . mysqli_error($conn);
-}
+} 
 
 disconnect_db($conn);
+
+$has_created_league = false;
+$conn_ach = connect_db(); // Use a função de conexão
+$user_id_escaped = mysqli_real_escape_string($conn_ach, $user_id); // Escapar o user_id
+
+$sql_check_league_creation = "SELECT COUNT(*) FROM $table_leagues WHERE creator_id = '$user_id_escaped'";
+$result_check_league_creation = mysqli_query($conn_ach, $sql_check_league_creation);
+
+if ($result_check_league_creation) { // Verifica se a consulta foi bem-sucedida
+    $row_check_league_creation = mysqli_fetch_row($result_check_league_creation);
+    $league_count = $row_check_league_creation[0];
+
+    if ($league_count > 0) {
+        $has_created_league = true;
+    }
+}
+disconnect_db($conn_ach); 
 
 $conquistas = [
     [
@@ -117,8 +130,7 @@ $conquistas = [
     <?php
         // Lógica individual de desbloqueio
         if ($a["required"] === "league") {
-            // Substituir por consulta real depois para verificar se o usuário criou uma liga
-            $desbloqueada = false;
+             $desbloqueada = $has_created_league; 
         } else {
             $desbloqueada = ($total_score >= $a["required"]);
         }

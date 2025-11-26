@@ -25,6 +25,44 @@ body {
 h1 {
   font-size: 4rem;
 }
+h2 {
+  font-size: 3rem;
+}
+
+h3,
+label,
+td,
+p,
+th,
+input {
+  font-size: 2.5rem;
+}
+
+input {
+  /* Margin e Padding */
+  padding: 0.6rem;
+  margin-top: 2rem;
+
+  /* Borda */
+  border-radius: 1rem;
+  border: solid #61526c;
+
+  /* Cores */
+  background-color: #61526c;
+}
+
+select {
+  /* Margin e Padding */
+  padding: 0.6rem;
+  margin-top: 2rem;
+
+  /* Borda */
+  border-radius: 1rem;
+  border: solid #61526c;
+
+  /* Cores */
+  background-color: #61526c;
+}
 
 button {
   /* Fonte */
