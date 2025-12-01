@@ -1,7 +1,7 @@
 <?php
-require "authenticate.php"; // <--- Adicione esta linha
-require "db_functions.php"; // <--- Adicione esta linha
-require "db_credentials.php"; // <--- Adicione esta linha
+require "authenticate.php";
+require "db_functions.php";
+require "db_credentials.php";
 
 // Garante que o usuário esteja logado para acessar esta página
 if (!$login) {
@@ -11,7 +11,11 @@ if (!$login) {
 
 $user_id = $_SESSION["user_id"];
 $user_name = $_SESSION["user_name"];
-$conn = connect_db(); // Abre a conexão com o banco de dados 
+// Variáveis da liga ativa já vêm do authenticate.php e são globais aqui
+
+$conn = connect_db(); // Abre a conexão com o banco de dados
+
+$user_id_escaped = mysqli_real_escape_string($conn, $user_id); 
 
 $message = '';
 
@@ -25,7 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"]) && $_POST["a
     $hashed_keyword_escaped = mysqli_real_escape_string($conn, $hashed_keyword);
     $user_id_escaped = mysqli_real_escape_string($conn, $user_id);
 
-    // verificaçoes para criação da liga
+    // verificacoes para criação da liga
      if (empty($league_name) || empty($league_keyword)) {
         $message = "<p style='color: red;'>Nome e palavra-chave da liga são obrigatórios.</p>";
     } else {
@@ -37,18 +41,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"]) && $_POST["a
             $message = "<p style='color: orange;'>Já existe uma liga com este nome</p>";
         } else {
             // Insere a nova liga
-            $sql_insert_league = "INSERT INTO $table_leagues (name, keyword, creator_id) 
+            $sql_insert_league = "INSERT INTO $table_leagues (name, keyword, creator_id)
             VALUES ('$league_name_escaped', '$hashed_keyword_escaped', '$user_id_escaped')";
 
             if (mysqli_query($conn, $sql_insert_league)) {
                 $new_league_id = mysqli_insert_id($conn);
                 $new_league_id_escaped = mysqli_real_escape_string($conn, $new_league_id);
 
-                // O criador da liga entra automaticamente nela
-                $sql_join_creator = "INSERT INTO $table_user_leagues (user_id, league_id) VALUES ('$user_id_escaped', '$new_league_id_escaped')";
-                mysqli_query($conn, $sql_join_creator);
-
-                $message = "<p style='color: green;'>Liga '<strong>" . htmlspecialchars($league_name) . "</strong>' criada com sucesso e você já faz parte dela! </p>";
+                $sql_set_active_league = "UPDATE $table_users SET current_league_id = '$new_league_id_escaped' WHERE id = '$user_id_escaped'";
+                if (mysqli_query($conn, $sql_set_active_league)) {
+                    // Atualiza a sessão para refletir a nova liga ativa
+                    $_SESSION["user_current_league_id"] = $new_league_id;
+                    $_SESSION["user_current_league_name"] = htmlspecialchars($league_name);
+                    $user_current_league_id = $new_league_id; // Atualiza variável local
+                    $user_current_league_name = htmlspecialchars($league_name); // Atualiza variável local
+                    $message = "<p style='color: green;'>Liga '<strong>" . htmlspecialchars($league_name) . "</strong>' criada com sucesso e você já faz parte dela como sua liga ativa! </p>";
+                } else {
+                    $message = "<p style='color: red;'>Liga criada, mas erro ao defini-la como sua liga ativa: " . mysqli_error($conn) . " </p>";
+                }
             } else {
                 $message = "<p style='color: red;'>Erro ao criar liga: " . mysqli_error($conn) . " </p>";
             }
@@ -69,27 +79,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"]) && $_POST["a
       if (empty($entered_keyword) || $league_id_to_join <= 0) {
         $message = "<p style='color: red;'>Selecione uma liga e forneça a palavra-chave. </p>";
     } else {
-        // Verifica se o usuário já está nesta liga
-        $sql_check_user_league = "SELECT COUNT(*) FROM $table_user_leagues WHERE user_id = '$user_id_escaped' AND league_id = '$league_id_to_join_escaped'";
-        $result_check_user_league = mysqli_query($conn, $sql_check_user_league);
-        $row_check_user_league = mysqli_fetch_row($result_check_user_league);
-        $count = $row_check_user_league[0];
-
-        if ($count > 0) {
-            $message = "<p style='color: orange;'>Você já faz parte desta liga. </p>";
+        // VERIFICAR SE O USUÁRIO JÁ TEM UMA LIGA ATIVA
+        if ($user_current_league_id !== null) {
+            $message = "<p style='color: orange;'>Você já está em uma liga ativa (<strong>" . htmlspecialchars($user_current_league_name) . "</strong>). Saia dela antes de entrar em outra.</p>";
         } else {
-            // Busca a palavra-chave da liga (hash MD5)
+             // Busca a palavra-chave da liga (hash MD5)
             $sql_get_league_keyword = "SELECT keyword, name FROM $table_leagues WHERE id = '$league_id_to_join_escaped'";
             $result_get_league_keyword = mysqli_query($conn, $sql_get_league_keyword);
             $league_data = mysqli_fetch_assoc($result_get_league_keyword);
 
              if ($league_data && md5($entered_keyword_escaped) === $league_data['keyword']) {
-                // Junta o usuário à liga
-                $sql_join_league = "INSERT INTO $table_user_leagues (user_id, league_id) VALUES ('$user_id_escaped', '$league_id_to_join_escaped')";
-                if (mysqli_query($conn, $sql_join_league)) {
-                    $message = "<p style='color: green;'>Você entrou na liga '<strong>" . htmlspecialchars($league_data['name']) . "</strong>' com sucesso! </p>";
+
+                // DEFINIR A NOVA LIGA COMO A LIGA ATIVA DO USUÁRIO
+                $sql_set_active_league = "UPDATE $table_users SET current_league_id = '$league_id_to_join_escaped' WHERE id = '$user_id_escaped'";
+                if (mysqli_query($conn, $sql_set_active_league)) {
+                    // Atualiza a sessão
+                    $_SESSION["user_current_league_id"] = $league_id_to_join;
+                    $_SESSION["user_current_league_name"] = htmlspecialchars($league_data['name']);
+                    $user_current_league_id = $league_id_to_join; // Atualiza variável local
+                    $user_current_league_name = htmlspecialchars($league_data['name']); // Atualiza variável local
+                    $message = "<p style='color: green;'>Você entrou na liga '<strong>" . htmlspecialchars($league_data['name']) . "</strong>' com sucesso! Ela é agora sua liga ativa. </p>";
                 } else {
-                    $message = "<p style='color: red;'>Erro ao entrar na liga: " . mysqli_error($conn) . " </p>";
+                    $message = "<p style='color: red;'>Erro ao entrar na liga (não foi possível defini-la como ativa): " . mysqli_error($conn) . " </p>";
                 }
             } else {
                 $message = "<p style='color: red;'>Palavra-chave incorreta para esta liga. </p>";
@@ -97,6 +108,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"]) && $_POST["a
         }
     }
 }
+
+// --- SAIR DA LIGA ATIVA ---
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"]) && $_POST["action"] == "leave_league") {
+    if ($user_current_league_id !== null) {
+        $user_id_escaped = mysqli_real_escape_string($conn, $user_id);
+        // Define current_league_id como NULL na tabela users
+        $sql_leave_league = "UPDATE $table_users SET current_league_id = NULL WHERE id = '$user_id_escaped'";
+        if (mysqli_query($conn, $sql_leave_league)) {
+            // Remove a liga ativa da sessão
+            $old_league_name = $_SESSION["user_current_league_name"];
+            $_SESSION["user_current_league_id"] = null;
+            $_SESSION["user_current_league_name"] = null;
+            $user_current_league_id = null; // Atualiza variável local
+            $user_current_league_name = null; // Atualiza variável local
+            $message = "<p style='color: green;'>Você saiu da liga '<strong>" . htmlspecialchars($old_league_name) . "</strong>' com sucesso. </p>";
+        } else {
+            $message = "<p style='color: red;'>Erro ao sair da liga: " . mysqli_error($conn) . " </p>";
+        }
+    } else {
+        $message = "<p style='color: orange;'>Você não está em nenhuma liga ativa para sair.</p>";
+    }
+}
+
 
 // --- EXIBIR DADOS ---
 
@@ -109,25 +143,6 @@ if ($result_all_leagues) {
         $all_leagues[] = $row;
     }
 }
-
-// Ligas que o usuário logado pertence
-$user_leagues_data = [];
-$user_id_escaped = mysqli_real_escape_string($conn, $user_id); // Garante que o user_id está escapado aqui também
-
-$sql_user_leagues = "SELECT l.id, l.name 
-FROM $table_leagues l 
-JOIN $table_user_leagues ul ON l.id = ul.league_id 
-WHERE ul.user_id = '$user_id_escaped' 
-ORDER BY l.name ASC";
-
-
-$result_user_leagues = mysqli_query($conn, $sql_user_leagues);
-if ($result_user_leagues) {
-    while ($row = mysqli_fetch_assoc($result_user_leagues)) {
-        $user_leagues_data[] = $row;
-    }
-}
-
 // --- RANKING GLOBAL ---
 $global_ranking_total = [];
 $sql_global_total = "SELECT name, total_score FROM $table_users ORDER BY total_score DESC, name ASC";
@@ -159,9 +174,10 @@ if ($result_global_weekly) {
 
 // --- RANKINGS POR LIGA ---
 $league_rankings = [];
-foreach ($user_leagues_data as $league) {
-    $league_id = $league['id'];
-    $league_name = $league['name'];
+// Agora, só processamos os rankings da liga ativa do usuário, se houver
+if ($user_current_league_id !== null) {
+    $league_id = $user_current_league_id;
+    $league_name = $user_current_league_name;
     $league_id_escaped = mysqli_real_escape_string($conn, $league_id);
 
     // Ranking Total da Liga
@@ -171,7 +187,6 @@ foreach ($user_leagues_data as $league) {
         FROM $table_users u
         JOIN $table_match_history mh ON u.id = mh.user_id
         WHERE mh.league_id = '$league_id_escaped'
-        AND u.id IN (SELECT user_id FROM $table_user_leagues WHERE league_id = '$league_id_escaped')
         GROUP BY u.id, u.name
         ORDER BY league_total_score DESC, u.name ASC";
     $result_league_total = mysqli_query($conn, $sql_league_total);
@@ -188,7 +203,6 @@ foreach ($user_leagues_data as $league) {
         FROM $table_users u
         JOIN $table_match_history mh ON u.id = mh.user_id
         WHERE mh.league_id = '$league_id_escaped' AND mh.played_at >= '$start_of_week_escaped'
-        AND u.id IN (SELECT user_id FROM $table_user_leagues WHERE league_id = '$league_id_escaped')
         GROUP BY u.id, u.name
         ORDER BY league_weekly_score DESC, u.name ASC";
     $result_league_weekly = mysqli_query($conn, $sql_league_weekly);
@@ -274,7 +288,9 @@ disconnect_db($conn);
 
 <section id="join-league-section">
     <h2>Participar de Liga Existente</h2>
-    <?php if (empty($all_leagues)): ?>
+    <?php if ($user_current_league_id !== null): ?>
+        <p>Você já está em uma liga ativa (<strong><?php echo htmlspecialchars($user_current_league_name); ?></strong>). Saia dela antes de entrar em outra.</p>
+    <?php elseif (empty($all_leagues)): ?>
         <p>Nenhuma liga disponível para participar ainda.</p>
     <?php else: ?>
         <form action="liga.php" method="post">
@@ -298,74 +314,81 @@ disconnect_db($conn);
 </section>
 
 <section id="my-leagues-section">
-    <h2>Minhas Ligas</h2>
-    <?php if (empty($user_leagues_data)): ?>
-        <p>Você não está participando de nenhuma liga ainda. Crie uma ou junte-se a uma existente! </p>
+    <h2>Sua Liga Ativa</h2>
+    <?php if ($user_current_league_id !== null): ?>
+        <div class="league-card active-league-card">
+            <h3>Você está ativo na liga: <strong><?php echo htmlspecialchars($user_current_league_name); ?></strong></h3>
+            <p>Todas as suas partidas serão contabilizadas para esta liga.</p>
+            <!-- Formulário para sair da liga -->
+            <form action="liga.php" method="post" style="margin-top: 10px;">
+                <input type="hidden" name="action" value="leave_league">
+                <button type="submit" class="button-leave">Sair da Liga</button>
+            </form>
+
+            <?php
+            // Mostra os rankings da liga ativa
+            if (isset($league_rankings[$user_current_league_id])) {
+                $active_league_data = $league_rankings[$user_current_league_id];
+                ?>
+                <h4>Pontuação Total na Liga</h4>
+                <table class="league-ranking-table">
+                    <thead>
+                        <tr>
+                            <th>Posição</th>
+                            <th>Nome do Jogador</th>
+                            <th>Pontuação Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (empty($active_league_data['total'])): ?>
+                            <tr><td colspan="3">Nenhum jogador pontuou nesta liga ainda.</td></tr>
+                        <?php else: ?>
+                            <?php $pos_active = 1; foreach ($active_league_data['total'] as $player): ?>
+                                <tr>
+                                    <td><?php echo $pos_active++; ?></td>
+                                    <td><?php echo htmlspecialchars($player['name']); ?></td>
+                                    <td><?php echo htmlspecialchars($player['league_total_score']); ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+
+                <h4>Pontuação Semanal na Liga</h4>
+                <table class="league-ranking-table">
+                    <thead>
+                        <tr>
+                            <th>Posição</th>
+                            <th>Nome do Jogador</th>
+                            <th>Pontuação Semanal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (empty($active_league_data['weekly'])): ?>
+                            <tr><td colspan="3">Nenhum jogador pontuou nesta liga esta semana.</td></tr>
+                        <?php else: ?>
+                            <?php $pos_active_weekly = 1; foreach ($active_league_data['weekly'] as $player): ?>
+                                <tr>
+                                    <td><?php echo $pos_active_weekly++; ?></td>
+                                    <td><?php echo htmlspecialchars($player['name']); ?></td>
+                                    <td><?php echo htmlspecialchars($player['league_weekly_score']); ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+                <?php
+            }
+            ?>
+        </div>
     <?php else: ?>
-        <ul class="league-list">
-            <?php foreach ($user_leagues_data as $league): ?>
-                <li class="league-item">
-                    <div class="league-card">
-                        <h3><?php echo htmlspecialchars($league['name']); ?></h3>
-                        <p>Aqui estão os rankings desta liga.</p>
-
-                        <h4>Pontuação Total na Liga</h4>
-                        <table class="league-ranking-table">
-                            <thead>
-                                <tr>
-                                    <th>Posição</th>
-                                    <th>Nome do Jogador</th>
-                                    <th>Pontuação Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php if (empty($league_rankings[$league['id']]['total'])): ?>
-                                    <tr><td colspan="3">Nenhum jogador pontuou nesta liga ainda.</td></tr>
-                                <?php else: ?>
-                                    <?php $pos = 1; foreach ($league_rankings[$league['id']]['total'] as $player): ?>
-                                        <tr>
-                                            <td><?php echo $pos++; ?></td>
-                                            <td><?php echo htmlspecialchars($player['name']); ?></td>
-                                            <td><?php echo htmlspecialchars($player['league_total_score']); ?></td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                <?php endif; ?>
-                            </tbody>
-                        </table>
-
-                        <h4>Pontuação Semanal na Liga</h4>
-                        <table class="league-ranking-table">
-                            <thead>
-                                <tr>
-                                    <th>Posição</th>
-                                    <th>Nome do Jogador</th>
-                                    <th>Pontuação Semanal</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php if (empty($league_rankings[$league['id']]['weekly'])): ?>
-                                    <tr><td colspan="3">Nenhum jogador pontuou nesta liga esta semana.</td></tr>
-                                <?php else: ?>
-                                    <?php $pos = 1; foreach ($league_rankings[$league['id']]['weekly'] as $player): ?>
-                                        <tr>
-                                            <td><?php echo $pos++; ?></td>
-                                            <td><?php echo htmlspecialchars($player['name']); ?></td>
-                                            <td><?php echo htmlspecialchars($player['league_weekly_score']); ?></td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                <?php endif; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                </li>
-            <?php endforeach; ?>
-        </ul>
+        <p>Você não está em nenhuma liga ativa. Crie uma nova liga ou junte-se a uma existente para que suas pontuações sejam contabilizadas em uma liga! </p>
     <?php endif; ?>
 </section>
 
 <section id="global-ranking-section">
     <h2>Ranking Geral de Jogadores</h2>
-    
+
     <h3>Pontuação Total (Desde o Início)</h3>
     <table id="global-ranking-total-table">
         <thead>
@@ -405,7 +428,7 @@ disconnect_db($conn);
             <?php else: ?>
                 <?php $position = 1; foreach ($global_ranking_weekly as $player): ?>
                     <tr>
-                        <td><?php echo $pos++; ?></td>
+                        <td><?php echo $position++; ?></td>
                         <td><?php echo htmlspecialchars($player['name']); ?></td>
                         <td><?php echo htmlspecialchars($player['weekly_score']); ?></td>
                     </tr>
@@ -431,7 +454,7 @@ disconnect_db($conn);
             <tbody>
                 <?php foreach ($user_match_history as $match): ?>
                     <tr>
-                        <td><?php echo date('d/m/Y H:i:s', strtotime($match['played_at'])); ?></td>
+                        <td><?php echo date('d/m/y H:i', strtotime($match['played_at'])); ?></td>
                         <td><?php echo htmlspecialchars($match['score_gained']); ?></td>
                         <td><?php echo $match['league_name'] ? htmlspecialchars($match['league_name']) : 'Geral'; ?></td>
                     </tr>

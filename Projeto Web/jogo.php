@@ -12,7 +12,7 @@ if ($login && $_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"]) &&
     // Garante que a pontuação seja um número inteiro e positivo
     $score_to_add = isset($_POST["final_score"]) ? (int)$_POST["final_score"] : 0;
 
-    $current_league_id = isset($_SESSION["active_league_id"]) ? (int)$_SESSION["active_league_id"] : NULL;
+    $current_league_id = $user_current_league_id; 
 
     if ($score_to_add > 0) {
         $conn = connect_db();
@@ -20,10 +20,7 @@ if ($login && $_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"]) &&
         $score_to_add_escaped = mysqli_real_escape_string($conn, $score_to_add);
         $user_id_escaped = mysqli_real_escape_string($conn, $user_id);
 
-        $league_id_for_query = 'NULL';
-        if($current_league_id !== NULL && $current_league_id > 0){
-            $league_id_for_query = "'" . mysqli_real_escape_string($conn, $current_league_id) . "'";
-        }
+        $league_id_escaped = ($current_league_id !== null) ? "'" . mysqli_real_escape_string($conn, $current_league_id) . "'" : "NULL";
 
         $sql_update_user = "UPDATE $table_users 
         SET total_score = total_score + '$score_to_add_escaped' 
@@ -31,10 +28,11 @@ if ($login && $_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"]) &&
 
         if(mysqli_query($conn, $sql_update_user)){
             $sql_insert_match = "INSERT INTO $table_match_history (user_id, league_id, score_gained) 
-            VALUES ('$user_id_escaped', $league_id_for_query, '$score_to_add_escaped')";
+            VALUES ('$user_id_escaped', $league_id_escaped, '$score_to_add_escaped')";
 
             if (mysqli_query($conn, $sql_insert_match)) {
-                $score_save_message = "<p style='color: green;'>Pontuação adicionada e partida registrada com sucesso!</p>";
+                    $league_info = ($current_league_id !== null) ? " à liga <strong>" . htmlspecialchars($user_current_league_name) . "</strong>" : "";
+                    $score_save_message = "<p style='color: green;'>Pontuação adicionada com sucesso ao seu perfil$league_info!</p>";
             } else {
                 $score_save_message = "<p style='color: red;'>Erro ao registrar partida no histórico: " . mysqli_error($conn) . "</p>";
             }
@@ -90,6 +88,13 @@ if ($login && $_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"]) &&
         <input type="hidden" name="final_score" id="final_score_input">
     </form>
     <?php endif; ?>
+
+     <?php if (!empty($score_save_message)): ?>
+        <div class="message">
+            <?php echo $score_save_message; ?>
+        </div>
+    <?php endif; ?>
+
 
     <script src="jogo.js"></script>
     </section>

@@ -150,3 +150,11 @@ a {
 th {
   padding: 1rem 2rem;
 }
+
+#create-league-section {
+  /* Flex */
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}

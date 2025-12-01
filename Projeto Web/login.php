@@ -20,8 +20,10 @@ if (!$login && $_SERVER["REQUEST_METHOD"] == "POST") {
     $password = mysqli_real_escape_string($conn,$_POST["password"]);
     $password = md5($password);
 
-    $sql = "SELECT id,name,email,password FROM $table_users
-            WHERE email = '$email';";
+    $sql = "SELECT u.id, u.name, u.email, u.password, u.current_league_id, l.name as current_league_name
+        FROM $table_users u
+        LEFT JOIN $table_leagues l ON u.current_league_id = l.id
+        WHERE u.email = '$email';";
 
     $result = mysqli_query($conn, $sql);
     if($result){
@@ -33,6 +35,8 @@ if (!$login && $_SERVER["REQUEST_METHOD"] == "POST") {
           $_SESSION["user_id"] = $user["id"];
           $_SESSION["user_name"] = $user["name"];
           $_SESSION["user_email"] = $user["email"];
+          $_SESSION["user_current_league_id"] = $user["current_league_id"];
+          $_SESSION["user_current_league_name"] = $user["current_league_name"];
 
           header("Location: jogo.php");
           exit();
