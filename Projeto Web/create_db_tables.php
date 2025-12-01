@@ -7,7 +7,7 @@ if (!$conn) {
     die("Connection failed: " . mysqli_connect_error());
 }
 
-// Create database
+// criar banco de dados
 $sql = "CREATE DATABASE $dbname";
 if (mysqli_query($conn, $sql)) {
     echo "<br>Database created successfully<br>";
@@ -15,7 +15,7 @@ if (mysqli_query($conn, $sql)) {
     echo "<br>Error creating database: " . mysqli_error($conn);
 }
 
-// Choose database
+// Selecionar o banco de dados
 $sql = "USE $dbname";
 if (mysqli_query($conn, $sql)) {
     echo "<br>Database changed successfully<br>";
@@ -44,7 +44,8 @@ if (mysqli_query($conn, $sql)) {
     echo "<br>Error creating table $table_users: " . mysqli_error($conn); 
 }
 
-// Criar tabela leagues 
+// Criar tabela leagues
+// Referencia users 
 $sql = "CREATE TABLE $table_leagues (
   id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(100) NOT NULL UNIQUE,
@@ -60,6 +61,7 @@ if (mysqli_query($conn, $sql)) {
 }
 
 // Criar tabela match_history 
+// Referencia users e leagues
 $sql = "CREATE TABLE $table_match_history (
   id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   user_id INT(6) UNSIGNED NOT NULL,

@@ -1,6 +1,7 @@
 <?php
 require "db_credentials.php";
 
+// estabelece conexão com o banco de dados
 function connect_db(){
   global $servername, $username, $db_password, $dbname;
   $conn = mysqli_connect($servername, $username, $db_password, $dbname);
