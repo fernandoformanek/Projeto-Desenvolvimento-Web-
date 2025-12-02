@@ -420,7 +420,7 @@ disconnect_db($conn);
 
 <section id="global-ranking-section">
     <h2>Ranking Geral de Jogadores</h2>
-
+        <div class="info-box"> 
     <h3>Pontuação Total (Desde o Início)</h3>
     <table id="global-ranking-total-table">
         <thead>
@@ -470,10 +470,12 @@ disconnect_db($conn);
             <?php endif; ?>
         </tbody>
     </table>
+    </div>                
 </section>
 
 <section id="match-history-section">
     <h2>Meu Histórico de Partidas</h2>
+    <div class="info-box">
     <?php if (empty($user_match_history)): ?>
         <p>Você ainda não jogou nenhuma partida registrada. Comece a jogar para registrar sua pontuação! </p>
     <?php else: ?>
@@ -498,6 +500,7 @@ disconnect_db($conn);
             </tbody>
         </table>
     <?php endif; ?>
+    </div>
 </section>
 </main>
 </body>
