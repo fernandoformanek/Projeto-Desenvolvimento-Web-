@@ -61,7 +61,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"]) && $_POST["a
                     $_SESSION["user_current_league_name"] = htmlspecialchars($league_name); //htmlspecialchars previne que o usuario modifique algo na pagina
                     $user_current_league_id = $new_league_id; // Atualiza variável 
                     $user_current_league_name = htmlspecialchars($league_name); // Atualiza variável 
-                    $message = "<p style='color: green;'>Liga '<strong>" . htmlspecialchars($league_name) . "</strong>' criada com sucesso e você já faz parte dela como sua liga ativa! </p>";
+                    $message = "<p style='color: green;'>Liga <strong>" . htmlspecialchars($league_name) . "</strong> criada com sucesso e você já faz parte dela como sua liga ativa! </p>";
                 } else {
                     $message = "<p style='color: red;'>Liga criada, mas erro ao defini-la como sua liga ativa: " . mysqli_error($conn) . " </p>";
                 }
@@ -112,7 +112,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"]) && $_POST["a
                     $_SESSION["user_current_league_name"] = htmlspecialchars($league_data['name']);
                     $user_current_league_id = $league_id_to_join; // Atualiza variável 
                     $user_current_league_name = htmlspecialchars($league_data['name']); // Atualiza variável 
-                    $message = "<p style='color: green;'>Você entrou na liga '<strong>" . htmlspecialchars($league_data['name']) . "</strong>' com sucesso! Ela é agora sua liga ativa. </p>";
+                    $message = "<p style='color: green;'>Você entrou na liga <strong>" . htmlspecialchars($league_data['name']) . "</strong> com sucesso! Ela é agora sua liga ativa. </p>";
                 } else {
                     $message = "<p style='color: red;'>Erro ao entrar na liga (não foi possível defini-la como ativa): " . mysqli_error($conn) . " </p>";
                 }
@@ -138,7 +138,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"]) && $_POST["a
             $_SESSION["user_current_league_name"] = null;
             $user_current_league_id = null; // Atualiza variável 
             $user_current_league_name = null; // Atualiza variável
-            $message = "<p style='color: green;'>Você saiu da liga '<strong>" . htmlspecialchars($old_league_name) . "</strong>' com sucesso. </p>";
+            $message = "<p style='color: green;'>Você saiu da liga <strong>" . htmlspecialchars($old_league_name) . "</strong> com sucesso. </p>";
         } else {
             $message = "<p style='color: red;'>Erro ao sair da liga: " . mysqli_error($conn) . " </p>";
         }
@@ -386,7 +386,7 @@ disconnect_db($conn);
                 </table>
 
                 <h4>Pontuação Semanal na Liga</h4>
-                <table class="league-ranking-table">
+                <table id="weakly-ranking" class="league-ranking-table">
                     <thead>
                         <tr>
                             <th>Posição</th>
@@ -486,7 +486,7 @@ disconnect_db($conn);
                 <tr>
                     <th>Data/Hora</th>
                     <th>Pontuação Ganha</th>
-                    <th>Liga (se aplicável)</th>
+                    <th>Liga</th>
                 </tr>
             </thead>
             <tbody>

@@ -4,7 +4,6 @@ require "db_functions.php";
 require "db_credentials.php"; 
 
 // --- INÍCIO DA LÓGICA PARA SALVAR PONTUAÇÃO ---
-$score_save_message = ''; // Variável para armazenar mensagens de sucesso/erro
 
 // Verifica se a requisição é um POST para salvar pontuação E se o usuário está logado
 if ($login && $_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"]) && $_POST["action"] == "save_score") {
@@ -32,16 +31,9 @@ if ($login && $_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"]) &&
 
             if (mysqli_query($conn, $sql_insert_match)) {
                     $league_info = ($current_league_id !== null) ? " à liga <strong>" . htmlspecialchars($user_current_league_name) . "</strong>" : "";
-                    $score_save_message = "<p style='color: green;'>Pontuação adicionada com sucesso ao seu perfil$league_info!</p>";
-            } else {
-                $score_save_message = "<p style='color: red;'>Erro ao registrar partida no histórico: " . mysqli_error($conn) . "</p>";
-            }
-        } else {
-            $score_save_message = "<p style='color: red;'>Erro ao salvar pontuação: " . mysqli_error($conn) . "</p>";
+            } 
         }
         disconnect_db($conn);
-    } else {
-        $score_save_message = "<p style='color: orange;'>Pontuação zero ou inválida. Nada foi salvo.</p>";
     }
 }
 
@@ -88,13 +80,6 @@ if ($login && $_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"]) &&
         <input type="hidden" name="final_score" id="final_score_input">
     </form>
     <?php endif; ?>
-
-     <?php if (!empty($score_save_message)): ?>
-        <div class="message">
-            <?php echo $score_save_message; ?>
-        </div>
-    <?php endif; ?>
-
 
     <script src="jogo.js"></script>
     </section>
