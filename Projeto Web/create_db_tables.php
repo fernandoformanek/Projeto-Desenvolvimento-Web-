@@ -30,10 +30,6 @@ $sql = "CREATE TABLE $table_users (
   email VARCHAR(100) NOT NULL,
   password VARCHAR(128) NOT NULL,
   total_score INT DEFAULT 0, 
-  created_at DATETIME,
-  updated_at DATETIME,
-  last_login_at DATETIME,
-  last_logout_at DATETIME,
   current_league_id INT UNSIGNED NULL DEFAULT NULL, 
   UNIQUE (email)
 )";
