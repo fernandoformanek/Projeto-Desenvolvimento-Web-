@@ -25,13 +25,13 @@ if (mysqli_query($conn, $sql)) {
 
 // Criar tabela users
 $sql = "CREATE TABLE $table_users (
-  id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(100) NOT NULL,
-  email VARCHAR(100) NOT NULL,
-  password VARCHAR(128) NOT NULL,
-  total_score INT DEFAULT 0, 
-  current_league_id INT UNSIGNED NULL DEFAULT NULL, 
-  UNIQUE (email)
+  id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY, -- id
+  name VARCHAR(100) NOT NULL, -- nome
+  email VARCHAR(100) NOT NULL, -- email
+  password VARCHAR(128) NOT NULL, -- senha
+  total_score INT DEFAULT 0, -- pontuação total
+  current_league_id INT UNSIGNED NULL DEFAULT NULL, -- liga atual 
+  UNIQUE (email) 
 )";
 
 if (mysqli_query($conn, $sql)) {
@@ -43,11 +43,11 @@ if (mysqli_query($conn, $sql)) {
 // Criar tabela leagues
 // Referencia users 
 $sql = "CREATE TABLE $table_leagues (
-  id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(100) NOT NULL UNIQUE,
-  keyword VARCHAR(255) NOT NULL, -- Para armazenar a palavra chave hash da liga
-  creator_id INT(6) UNSIGNED NOT NULL,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY, -- id
+  name VARCHAR(100) NOT NULL UNIQUE, -- nome
+  keyword VARCHAR(255) NOT NULL, -- palavra chave hash da liga
+  creator_id INT(6) UNSIGNED NOT NULL, -- id do criador da liga
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP, -- quando foi criada a liga
   FOREIGN KEY (creator_id) REFERENCES $table_users(id) ON DELETE CASCADE
 )";
 if (mysqli_query($conn, $sql)) {
@@ -59,12 +59,12 @@ if (mysqli_query($conn, $sql)) {
 // Criar tabela match_history 
 // Referencia users e leagues
 $sql = "CREATE TABLE $table_match_history (
-  id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  user_id INT(6) UNSIGNED NOT NULL,
-  league_id INT(6) UNSIGNED NULL DEFAULT NULL,
-  score_gained INT NOT NULL,
-  played_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES $table_users(id) ON DELETE CASCADE,
+  id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY, -- id
+  user_id INT(6) UNSIGNED NOT NULL, -- id do usuario
+  league_id INT(6) UNSIGNED NULL DEFAULT NULL, -- id da liga
+  score_gained INT NOT NULL, -- quantos pontos ganhou
+  played_at DATETIME DEFAULT CURRENT_TIMESTAMP, -- data que jogou a partida
+  FOREIGN KEY (user_id) REFERENCES $table_users(id) ON DELETE CASCADE, -- todas as partidas serão deletadas se um usuario for deletado
   FOREIGN KEY (league_id) REFERENCES $table_leagues(id) ON DELETE SET NULL
 )";
 if (mysqli_query($conn, $sql)) {
@@ -77,6 +77,7 @@ if (mysqli_query($conn, $sql)) {
 $sql = "ALTER TABLE $table_users
         ADD CONSTRAINT fk_current_league
         FOREIGN KEY (current_league_id) REFERENCES $table_leagues(id) ON DELETE SET NULL";
+        
 if (mysqli_query($conn, $sql)) {
     echo "<br>Foreign key 'fk_current_league' added to $table_users successfully<br>";
 } else {

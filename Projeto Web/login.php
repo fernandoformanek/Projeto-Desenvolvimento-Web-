@@ -10,8 +10,9 @@ if ($login) {
     exit();
 }
 
-
+// se usuario não estiver logado
 if (!$login && $_SERVER["REQUEST_METHOD"] == "POST") {
+  // Verifica se os campos de email e password foram enviados no formulário
   if (isset($_POST["email"]) && isset($_POST["password"])) {
 
     $conn = connect_db();
@@ -20,16 +21,20 @@ if (!$login && $_SERVER["REQUEST_METHOD"] == "POST") {
     $password = mysqli_real_escape_string($conn,$_POST["password"]);
     $password = md5($password);
 
+    // Busca o usuario pelo email
     $sql = "SELECT u.id, u.name, u.email, u.password, u.current_league_id, l.name as current_league_name
-        FROM $table_users u
+        FROM $table_users u -- u é $table_users
         LEFT JOIN $table_leagues l ON u.current_league_id = l.id
         WHERE u.email = '$email';";
 
+    // executa o sql
     $result = mysqli_query($conn, $sql);
     if($result){
+      // verifica se ha usuario com o email fornecido
       if (mysqli_num_rows($result) > 0) {
         $user = mysqli_fetch_assoc($result);
 
+        // Compara a senha hashed fornecida pelo usuário com a senha hashed armazenada no DB
         if ($user["password"] == $password) {
 
           $_SESSION["user_id"] = $user["id"];
@@ -93,7 +98,6 @@ if (!$login && $_SERVER["REQUEST_METHOD"] == "POST") {
         <input required type="password" name="password" value="" id="senha" placeholder="Senha" />
 
         <!-- Botões -->
-        <!-- <button type="submit" id="botao-criarconta">Criar nova conta</button> -->
         <a href="criarConta.php" id="botao-cadastre-se">Criar Conta</a>
         <button type="submit" id="botao-logar">Logar</button>
       </form>

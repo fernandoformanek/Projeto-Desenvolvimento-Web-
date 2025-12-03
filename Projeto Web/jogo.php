@@ -5,10 +5,11 @@ require "db_credentials.php";
 
 // --- INÍCIO DA LÓGICA PARA SALVAR PONTUAÇÃO ---
 
-// Verifica se a requisição é um POST para salvar pontuação E se o usuário está logado
+// Verifica se a requisição é um POST (formulario enviado) para salvar pontuação E se o usuário está logado
 if ($login && $_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"]) && $_POST["action"] == "save_score") {
     $user_id = $_SESSION["user_id"];
-    // Garante que a pontuação seja um número inteiro e positivo
+
+    // Obtem a pontuação pelo formuklario oculto e garante que a pontuação seja um número inteiro e positivo
     $score_to_add = isset($_POST["final_score"]) ? (int)$_POST["final_score"] : 0;
 
     $current_league_id = $user_current_league_id; 
@@ -21,10 +22,12 @@ if ($login && $_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"]) &&
 
         $league_id_escaped = ($current_league_id !== null) ? "'" . mysqli_real_escape_string($conn, $current_league_id) . "'" : "NULL";
 
+        // Sql para atualizar a pontuação do usuario em users
         $sql_update_user = "UPDATE $table_users 
         SET total_score = total_score + '$score_to_add_escaped' 
         WHERE id = '$user_id_escaped'";
 
+        // atualiza o historico de partidas do usuario
         if(mysqli_query($conn, $sql_update_user)){
             $sql_insert_match = "INSERT INTO $table_match_history (user_id, league_id, score_gained) 
             VALUES ('$user_id_escaped', $league_id_escaped, '$score_to_add_escaped')";
@@ -74,6 +77,7 @@ if ($login && $_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"]) &&
     <input type="text" id="input-usuario" placeholder="Digite aqui..." autocomplete="off"> 
     <button id="botao-iniciar">Iniciar Jogo</button>
 
+    <!-- Formulario oculto para enviar a pontuação -->
     <?php if ($login): // O formulário só aparece se o usuário estiver logado ?>
     <form id="scoreForm" action="jogo.php" method="post" style="display:none;">
         <input type="hidden" name="action" value="save_score">

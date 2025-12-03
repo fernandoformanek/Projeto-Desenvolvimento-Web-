@@ -51,6 +51,7 @@ function starttimer(segundos) {
 }
 
 function tick() {
+  // calcula o tempo restante
   tempoRestante = fimtempo - Date.now();
   if (tempoRestante <= 0) {
     tempoRestante = 0;

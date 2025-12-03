@@ -157,7 +157,7 @@ $result_all_leagues = mysqli_query($conn, $sql_all_leagues);
 
 if ($result_all_leagues) {
     while ($row = mysqli_fetch_assoc($result_all_leagues)) { // transforma as linhas em array
-        $all_leagues[] = $row; // add linha na lista
+        $all_leagues[] = $row; // add o array linha no array maior
     }
 }
 

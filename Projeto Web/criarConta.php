@@ -5,6 +5,7 @@ $error = false;
 $success = false;
 $name = $email = "";
 
+// se todos os campos do formulario foram enviados
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
   if (isset($_POST["name"]) && isset($_POST["email"]) && isset($_POST["password"]) && isset($_POST["confirm_password"])) {
 
@@ -15,13 +16,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = mysqli_real_escape_string($conn,$_POST["password"]);
     $confirm_password = mysqli_real_escape_string($conn,$_POST["confirm_password"]);
 
+    // verifica se a senha e a confirmação são iguais
     if ($password == $confirm_password) {
       $password = md5($password);
 
+      // sql para inserir novo usuario
       $sql = "INSERT INTO $table_users
               (name, email, password) VALUES
               ('$name', '$email', '$password');";
 
+      // executa o sql
       if(mysqli_query($conn, $sql)){
         $success = true;
       }

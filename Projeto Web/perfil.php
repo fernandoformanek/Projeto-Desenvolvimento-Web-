@@ -24,23 +24,27 @@ $sql = "SELECT total_score FROM $table_users WHERE id = '$user_id_escaped'";
 $result = mysqli_query($conn, $sql);
 
 if ($result && mysqli_num_rows($result) > 0) {
-    $user_data = mysqli_fetch_assoc($result);
-    $total_score = $user_data['total_score'];
+    $user_data = mysqli_fetch_assoc($result); // os dados do usuario viram um array
+    $total_score = $user_data['total_score']; // pega a pontuação total do usuario
 } 
 
 disconnect_db($conn);
 
 $has_created_league = false;
-$conn_ach = connect_db(); // Use a função de conexão
-$user_id_escaped = mysqli_real_escape_string($conn_ach, $user_id); // Escapar o user_id
+// conecta de novo no bd
+$conn_ach = connect_db(); 
+$user_id_escaped = mysqli_real_escape_string($conn_ach, $user_id); 
 
+// Query para contar quantas ligas este usuário criou
 $sql_check_league_creation = "SELECT COUNT(*) FROM $table_leagues WHERE creator_id = '$user_id_escaped'";
 $result_check_league_creation = mysqli_query($conn_ach, $sql_check_league_creation);
 
-if ($result_check_league_creation) { // Verifica se a consulta foi bem-sucedida
+if ($result_check_league_creation) { // Verifica se a consulta foi bem sucedida
+    // o primeiro elemento do array criado é a contagem
     $row_check_league_creation = mysqli_fetch_row($result_check_league_creation);
     $league_count = $row_check_league_creation[0];
 
+    // usuario ja criou uma liga
     if ($league_count > 0) {
         $has_created_league = true;
     }
